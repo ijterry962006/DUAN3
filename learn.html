@@ -4,9 +4,135 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+    <!-- Thêm CSS highlight -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <style>
+    body {
+      background-color: #282a36;
+      color: #f8f8f2;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1, h2, p {
+      color: #f8f8f2;
+    }
+
+    pre {
+      border-radius: 10px;
+      padding: 15px;
+      overflow-x: auto;
+    }
+  </style>`
+  </head>
+  <body>
     <h1>Cấu trúc dữ liệu</h1>
     <p>Học html và css nè</p>
-</body>
+    <h2>
+      <h3>học code ở đây nè</h3>
+      <pre><code class="language-c">
+        // dưới đây là hàm en cho 3 TH
+        // TH 1 : Queue kiểu Link List 
+        void enQueue(int x,Queue *pQ)
+        {
+            Position newNode = (struct Node *)malloc(sizeof(struct Node)); // do hàng đợi kiểu link list nên phải cấp phát vùng nhớ
+            pQ->Element = x;
+            pQ->Next = NULL;
+            pQ->Rear->Next = newNode; // tức là gắn cái newNode vô cái nút chấm sau phần tử cuối 
+            pQ->Rear = newNode; // cập nhật Rear đến con trỏ mới
+        }
+        // TH 2 : Queue kiểu Linear Array (kiểu Mảng) và kiểu Circular Queue
+        void enQueue(int x, Queue *pQ)
+        {
+            if(pQ->Rear - pQ->Front + 1 == MaxLength) // số lượng phần tử bằng max thì đầy thôi nè
+            {
+                printf("Loi: Hang day!");
+                return;                                 // thoát ra luôn nè không làm gì hết
+            }
+            if(pQ->Rear == MaxLength - 1)           // này là chưa đầy nhưng bị tràn nè
+            {
+                int j = 0;
+                for(int i = pQ->Front;i <= pQ->Rear;i++)  // Trường hợp này mình duyệt toàn bộ hàng đợi nhé
+                {
+                    pQ->Elements[j++] = pQ->Elements[i]; // đây là tịnh tiến nè VD hàng đợi như sau                                   
+                                                         // _  _  30 40 50 60 
+                }                                        // 0  1  2  3  4  5  <-- này là Rear là 5 nhe/còn Front là 0;
+                                                        // mình tịnh tiến như sau cho Elements[2] gán Elements[0] rồi tiếp tiếp
+                                                       // hàng đợi thành như này nè [30 40 50 60 _ _];
+                pQ->Rear = j-1; // cập nhập lại Rear nè
+                pQ->Front = 0;  // do đã tịnh tiến nên giờ Front là 0 nhé không còn 2 như ví dụ nhe
+            }
+            if(pQ->Front == -1) // rỗng khi vừa mới tạo
+                pQ->Front = 0; // rỗng thì mình cho hết rỗng thui nè
+            // Thắc mắc if có {} hay không cũng ksao nhe nhưng mà ngoặc thì chỉ bỏ mỗi Front = 0 thui nhe 
+            pQ->Rear++; // vì đã có Front = 0 rùi nên mình thêm Rear để để thêm phần tử vào nè
+            pQ->Elements[pQ->Rear] = x; // thêm x vào Rear nè 
+        }      
+        
+        
+        //Dưới đây là DE cho 3 TH Queue nhe
+        // TH 1 : Queue kiểu link list
+        void deQUeue(Queue *pQ)
+        {
+            if(pQ->Front->Next == NULL) // TH này là rỗng nè
+            {
+                printf("Loi: Hang rong!");
+                return;
+            }
+            Position temp = pQ->Front->Next; // cho temp trỏ tới phần tử đầu tiên nè (temp sẽ là nút mà tụi mình sẽ xóa)
+            pQ->Front->Next = temp->Next;   //bỏ liên kết giữa temp và Front -> Có nghĩa Front sẽ trỏ tới Next luôn bỏ qua temp
+            if(pQ->Rear == temp) // TH đặc biệt : có 1 phần tử duy  nhất trong hàng đợi
+            {
+                pQ->Rear = pQ->Front;   // Khi xóa temp thì Front và Rear trở về như cũ
+            }
+            free(temp);
+        }
+        /* Đây là ví dụ dễ hiểu
+        pQ-Front->[Header]->[10]->[20]---->[30]------>NULL
+                            temp           pQ->Rear         bỏ qua nút 10
+        pQ-Front->[Header]-------->[20]------>[30]------>NULL
+                            pQ->Front->Next | pQ->Rear
+        TH này là có phần tử duy nhất nhe         
+             pQ-Front->[Header]->[10]->NULL               
+                                temp
+            pQ-Front->[Header]->NULL
+                      pQ->Rear         giờ đây hàng đợi rỗng hoàn toàn
+        */
+        
+        //TH 2 nè : Queue kiểu Circular 
+        void deQUeue(Queue *pQ)
+        {
+            if(pQ->Front == -1)
+            {
+                printf("Loi: Hang rong!");
+                return;
+            }
+            pQ->Front++; // thao tác xóa ở đây
+        if(pQ->Front > pQ->Rear)
+        {
+            makenullQueue(pQ);
+        }
+        }
+        //TH 3 nè : Queue kiểu Linear Array
+        void deQueue(Queue *pQ)
+        {
+            if(!emptyQueue(*pQ))
+            {
+                pQ->Front = pQ->Front + 1;
+                if(pQ->Front > pQ->Rear)
+                 {
+                makenullQueue(pQ);
+                 }
+            }
+            else
+            {
+                printf("Loi: Hang rong!");
+            }
+        }
+</code></pre>
+    </h2>
+  </body>
 </html>
